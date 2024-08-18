@@ -2,6 +2,11 @@ package com.department.guide.domain.member
 
 import jakarta.persistence.*
 
+enum class ROLE {
+    ADMIN,
+    MEMBER
+}
+
 @Entity
 @Table(name = "member")
 class Member (
@@ -16,6 +21,18 @@ class Member (
     @Column(name = "member_password")
     val password: String,
 
-    @Column(name = "nickname")
+    @Column(name = "member_nickname")
     val nickname: String,
-)
+
+    @Column(name = "member_role")
+    @Enumerated(EnumType.STRING)
+    val role: ROLE
+) {
+
+    fun memberRes(): MemberResponse =
+        MemberResponse(
+            id!!,
+            email,
+            nickname
+        )
+}
