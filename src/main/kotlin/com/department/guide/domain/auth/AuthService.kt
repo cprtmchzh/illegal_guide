@@ -23,7 +23,7 @@ import java.util.*
 
 @Service
 @Transactional
-class AuthService (
+class AuthService ( /* ㄹㅇㅋㅋ */
     private val memberRepository: MemberRepository,
     private val authenticationManagerBuilder: AuthenticationManagerBuilder,
     private val jwtTokenProvider: JwtTokenProvider,
