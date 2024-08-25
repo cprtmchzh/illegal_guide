@@ -12,7 +12,7 @@ class JwtAuthenticationFilter(
     private val jwtTokenProvider: JwtTokenProvider
 ) : GenericFilterBean() {
     override fun doFilter(request: ServletRequest?, response: ServletResponse?,
-        chain: FilterChain?) {
+                          chain: FilterChain?) {
 
         val token = resolveToken(request as HttpServletRequest)
 

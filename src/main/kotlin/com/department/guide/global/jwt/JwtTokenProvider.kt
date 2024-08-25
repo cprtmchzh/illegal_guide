@@ -1,6 +1,7 @@
 package com.department.guide.global.jwt
 
 import com.department.guide.domain.auth.CustomUser
+import com.department.guide.domain.member.ROLE
 import io.jsonwebtoken.*
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
@@ -10,14 +11,18 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.util.*
 
-const val EXPIRATION_MILLISECONDS: Long = 1000 * 60 * 60 * 12
+const val accessTokenValidationTime: Long = 60 * 60 * 1000L // 1시간
+const val refreshTokenValidationTime: Long = 24 * 60 * 60 * 1000L // 24시간
 
 @Component
-class JwtTokenProvider {
+class JwtTokenProvider(
+    private val refreshTokenRepository: RefreshTokenRepository
+) {
 
     @Value("\${jwt.secret}")
     lateinit var secretKey: String
@@ -33,7 +38,8 @@ class JwtTokenProvider {
             .joinToString(",", transform = GrantedAuthority::getAuthority)
 
         val now = Date()
-        val accessExpiration = Date(now.time + EXPIRATION_MILLISECONDS)
+        val accessExpiration = Date(now.time + accessTokenValidationTime)
+        val refreshExpiration = Date(now.time + refreshTokenValidationTime)
 
         val accessToken = Jwts.builder()
             .setSubject(authentication.name)
@@ -44,14 +50,21 @@ class JwtTokenProvider {
             .signWith(key, SignatureAlgorithm.HS256)
             .compact()
 
-        return TokenInfo("Bearer", accessToken)
+        val refreshToken = Jwts.builder()
+            .setSubject(authentication.name)
+            .claim("userId", (authentication.principal as CustomUser).userId)
+            .setExpiration(refreshExpiration)
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact()
+
+        return TokenInfo("Bearer", accessToken, refreshToken)
     }
 
-    fun getAuthentication(token: String): Authentication {
-        val claims: Claims = getClaims(token)
+    fun getAuthentication(accessToken: String): Authentication {
 
-        val auth = claims["auth"]?: throw RuntimeException("잘못된 토큰입니다.")
-        val userId = claims["userId"] ?: throw RuntimeException("잘못된 토큰입니다.")
+        val claims: Claims = getClaims(accessToken)
+        val auth = claims["auth"]?: throw RuntimeException("권한 정보가 없는 토큰입니다.")
+        val userId = claims["userId"] ?: throw RuntimeException("유저 정보가 없는 토큰입니다.")
 
         val authorities: Collection<GrantedAuthority> = (auth as String)
             .split(",")
@@ -61,6 +74,43 @@ class JwtTokenProvider {
             CustomUser(userId.toString().toLong(), claims.subject, "", authorities)
 
         return UsernamePasswordAuthenticationToken(principal, "", authorities)
+    }
+
+    fun tokenMatches(accessToken: String): Boolean {
+
+        val accessTokenClaim: Claims = getClaims(accessToken)
+        val email: String =
+            (SecurityContextHolder
+                .getContext()
+                .authentication
+                .principal as CustomUser).username
+
+        val refreshTokenClaim: Claims =
+            getClaims(refreshTokenRepository.findByEmail(email).token)
+
+        if (accessTokenClaim.subject.equals(refreshTokenClaim.subject))
+            return true;
+
+        return false
+    }
+
+    fun recreationAccessToken(userId: Long, email: String, roles: ROLE): String {
+
+        val claims: Claims = Jwts.claims().setSubject(email)
+        claims.put("userId", userId)
+        claims.put("auth", roles)
+
+        val now = Date()
+        val accessExpiration = Date(now.time + accessTokenValidationTime)
+
+        val accessToken = Jwts.builder()
+            .setClaims(claims)
+            .setIssuedAt(now)
+            .setExpiration(accessExpiration)
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact()
+
+        return accessToken;
     }
 
     fun validateToken(token: String): Boolean {
