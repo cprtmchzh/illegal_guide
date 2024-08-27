@@ -26,7 +26,16 @@ class PostService(
 
     fun getPost(id: Long): Optional<Post> {
 
-        return postRepository.findById(id)
+        val post = this.postRepository.findById(id)
+
+        if (post.isPresent) {
+            val postInfo = post.get()
+            postInfo.hits++
+            this.postRepository.save(postInfo)
+        }
+
+        return post
+
     }
 
     fun createPost(postRequest: PostRequest, userId: Long): Post {

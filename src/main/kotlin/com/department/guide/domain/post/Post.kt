@@ -23,7 +23,7 @@ class Post (
     val content: String,
 
     @Column(name = "post_hits")
-    val hits: Long,
+    var hits: Long,
 
     @Column(name = "post_timestamp")
     val timestamp: LocalDateTime,
