@@ -17,10 +17,11 @@ class PostService(
     private val memberRepository: MemberRepository
 ) {
 
-    fun getPostList(page: Int): Page<PostResponse> {
+    fun getPostList(page: Int): Page<PostResponse>? {
 
         val pageable: Pageable = PageRequest.of(page - 1, 10)
         return postRepository.findAllDesc(pageable)
+            ?.map { it.postRes() }
     }
 
     fun getPost(id: Long): Optional<Post> {

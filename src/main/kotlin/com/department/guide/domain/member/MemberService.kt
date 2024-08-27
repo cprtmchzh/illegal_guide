@@ -21,7 +21,7 @@ class MemberService(
 
     fun searchMemberInfo(id: Long): MemberResponse {
 
-        val member = memberRepository.findByIdOrNull(id)
+        val member: Member = memberRepository.findByIdOrNull(id)
             ?: throw InvalidInputException("id", "해당 유저는 존재하지 않습니다.")
 
         return member.memberRes()

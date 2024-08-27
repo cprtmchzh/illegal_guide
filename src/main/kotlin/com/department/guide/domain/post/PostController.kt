@@ -33,7 +33,7 @@ class PostController(
     fun getPostList(@RequestParam(value = "page") page: Int):
             BaseResponse<Page<PostResponse>> {
 
-        val paging: Page<PostResponse> = this.postService.getPostList(page)
+        val paging: Page<PostResponse>? = this.postService.getPostList(page)
         return BaseResponse(data = paging, message = "게시글 리스트 조회 성공")
     }
 
