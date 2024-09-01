@@ -13,12 +13,12 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @Configuration
 @EnableMongoAuditing
-@EnableMongoRepositories(basePackages = ["com.department.guide.domain.info"])
+@EnableMongoRepositories(basePackages = ["com.department.guide.domain"])
 class MongoDBConfig (
     private val mongoMappingContext: MongoMappingContext
 ) {
 
-    @Bean
+    /*@Bean
     fun mappingMongoConverter(mongoDatabaseFactory: MongoDatabaseFactory,
                               mongoMappingContext: MongoMappingContext): MappingMongoConverter {
 
@@ -26,5 +26,5 @@ class MongoDBConfig (
         val converter = MappingMongoConverter(dbRefResolver, mongoMappingContext)
         converter.setTypeMapper(DefaultMongoTypeMapper(null))
         return converter
-    }
+    }*/
 }

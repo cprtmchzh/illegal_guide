@@ -30,10 +30,11 @@ class PostController(
         ApiResponse(responseCode = "200", description = "게시글 리스트 조회 성공")
     ])
     @GetMapping("")
-    fun getPostList(@RequestParam(value = "page") page: Int):
+    fun getPostList(@RequestParam(value = "page") page: Int,
+                    @RequestParam(value = "kw", defaultValue = "") keyword: String):
             BaseResponse<Page<PostResponse>> {
 
-        val paging: Page<PostResponse>? = this.postService.getPostList(page)
+        val paging: Page<PostResponse>? = this.postService.getPostList(page, keyword)
         return BaseResponse(data = paging, message = "게시글 리스트 조회 성공")
     }
 
