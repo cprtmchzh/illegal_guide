@@ -27,8 +27,9 @@ class SecurityConfig(
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
             .authorizeHttpRequests {
-                it.requestMatchers("api/auths/join").anonymous()
-                    .requestMatchers("/api/members/info").hasRole("MEMBER")
+                it.requestMatchers("api/auths/join", "api/emails/verification-requests", "api/emails/verification",
+                    "api/auths/login", "api/posts").anonymous()
+                    .requestMatchers("/api/members/info", "api/posts/**").hasRole("MEMBER")
                     .anyRequest().permitAll()
             }
             .addFilterBefore(

@@ -1,6 +1,6 @@
 package com.department.guide.global.config
 
-import com.department.guide.domain.auth.mail.MailRepository
+import com.department.guide.domain.mail.MailRepository
 import com.department.guide.global.jwt.RefreshTokenRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -16,7 +16,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.StringRedisSerializer
 
 @Configuration
-@EnableRedisRepositories(basePackages = ["com.department.guide.global.jwt", "com.department.guide.domain.auth.mail"],
+@EnableRedisRepositories(basePackages = ["com.department.guide.global.jwt", "com.department.guide.domain.mail"],
     includeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
         classes = [RefreshTokenRepository::class, MailRepository::class])])
 class RedisConfig {
