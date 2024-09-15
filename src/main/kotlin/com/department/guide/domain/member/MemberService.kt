@@ -1,8 +1,8 @@
 package com.department.guide.domain.member
 
-import com.department.guide.domain.auth.mail.Mail
-import com.department.guide.domain.auth.mail.MailRepository
-import com.department.guide.domain.auth.mail.MailService
+import com.department.guide.domain.mail.Mail
+import com.department.guide.domain.mail.MailRepository
+import com.department.guide.domain.mail.MailService
 import com.department.guide.global.exception.InvalidInputException
 import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
