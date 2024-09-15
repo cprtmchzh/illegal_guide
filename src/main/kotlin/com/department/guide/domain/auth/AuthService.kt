@@ -23,7 +23,7 @@ import java.util.*
 
 @Service
 @Transactional
-class AuthService ( /* ㄹㅇㅋㅋ */
+class AuthService (
     private val memberRepository: MemberRepository,
     private val authenticationManagerBuilder: AuthenticationManagerBuilder,
     private val jwtTokenProvider: JwtTokenProvider,
@@ -34,9 +34,14 @@ class AuthService ( /* ㄹㅇㅋㅋ */
     fun join(memberRequest: MemberRequest): String {
 
         var member: Member? = memberRepository.findByEmail(memberRequest.email)
+        var nickname: Member? = memberRepository.findByEmail(memberRequest.nickname)
 
         if (member != null) {
             throw InvalidInputException("loginId", "이미 등록된 ID 입니다.")
+        }
+
+        if (nickname != null) {
+            throw InvalidInputException("loginId", "이미 사용 중인 닉네임입니다.")
         }
 
         member = Member(
