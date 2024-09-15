@@ -1,4 +1,4 @@
-package com.department.guide.domain.auth.mail
+package com.department.guide.domain.mail
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash

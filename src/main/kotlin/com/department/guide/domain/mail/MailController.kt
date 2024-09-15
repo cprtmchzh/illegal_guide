@@ -1,4 +1,4 @@
-package com.department.guide.domain.auth.mail
+package com.department.guide.domain.mail
 
 import com.department.guide.domain.member.MemberService
 import com.department.guide.global.httpStatus.BaseResponse

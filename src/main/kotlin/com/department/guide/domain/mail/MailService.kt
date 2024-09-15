@@ -1,4 +1,4 @@
-package com.department.guide.domain.auth.mail
+package com.department.guide.domain.mail
 
 import jakarta.transaction.Transactional
 import org.springframework.mail.MailSendException
